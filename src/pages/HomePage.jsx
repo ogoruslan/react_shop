@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Alert, Box, Grid, Stack, Typography } from "@mui/material";
 import LoadingState from "../components/LoadingState";
 import ProductCard from "../components/ProductCard";
@@ -10,15 +10,19 @@ export default function HomePage() {
   const { loading, products, error } = useProducts();
   const [search, setSearch] = useState("");
   const [categorySlug, setCategorySlug] = useState("all");
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesCategory =
-      categorySlug === "all" ||
-      getProductCategory(product).slug === categorySlug;
-    return matchesSearch && matchesCategory;
-  });
+    const filteredProducts = useMemo(
+      () =>
+        products.filter((product) => {
+          const matchesSearch = product.title
+            .toLowerCase()
+            .includes(search.toLowerCase());
+          const matchesCategory =
+            categorySlug === "all" ||
+            getProductCategory(product).slug === categorySlug;
+          return matchesSearch && matchesCategory;
+        }),
+      [categorySlug, products, search],
+    );
 
   return (
     <>

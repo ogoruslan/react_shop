@@ -11,24 +11,28 @@ import {
 import { AddShoppingCart } from "@mui/icons-material";
 import { addItem } from "../redux/cartReducer";
 import { getProductCategory } from "../services/productService";
+import { memo, useCallback } from "react";
 
 const cardColors = ["#fff3e6", "#e8f3f1", "#eef0f8", "#f8edf1"];
 
-export default function ProductCard({ product }) {
+function ProductCard({ product }) {
   const dispatch = useDispatch();
   const cardColor = cardColors[(product.id - 1) % cardColors.length];
   const category = getProductCategory(product);
-  const addToCart = () =>
-    dispatch(
-      addItem({
-        product: product.id,
-        name: product.title,
-        description: product.body,
-        price: product.price,
-        image: product.image,
-        qty: 1,
-      }),
-    );
+  const addToCart = useCallback(
+    () =>
+      dispatch(
+        addItem({
+          product: product.id,
+          name: product.title,
+          description: product.body,
+          price: product.price,
+          image: product.image,
+          qty: 1,
+        }),
+      ),
+    [dispatch, product],
+  );
 
   return (
     <Card
@@ -101,3 +105,5 @@ export default function ProductCard({ product }) {
     </Card>
   );
 }
+
+export default memo(ProductCard);
